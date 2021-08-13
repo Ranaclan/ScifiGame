@@ -10,12 +10,14 @@ public class playerCam : MonoBehaviour
     //player
     private Transform head;
     private Transform player;
+    private GameObject hud;
     //rotation
     private float rotation;
     public float sensitivity = 10f;
     private float rotationAddition;
     //interaction
     public string interactInput = "g";
+    public int clickInput = 0;
     private RaycastHit interactObject;
     //free head mode
     public bool freeHeadMode = false;
@@ -38,15 +40,19 @@ public class playerCam : MonoBehaviour
         //player
         head = transform.parent;
         player = head.parent;
+        hud = player.GetChild(1).gameObject;
 
     }
 
     private void Update()
     {
-        CalculateRotation();
-        Interact();
-        FreeHeadMode();
-        ToggleFreeHeadMode();
+        if (Cursor.lockState == CursorLockMode.Locked)
+        {
+            CalculateRotation();
+            FreeHeadMode();
+            ToggleFreeHeadMode();
+        }
+        Interactions();
     }
 
     private void CalculateRotation()
@@ -77,16 +83,47 @@ public class playerCam : MonoBehaviour
         transform.Rotate(rotation, 0, 0);
     }
 
-    private void Interact()
+    private void Interactions()
     {
-        if(Input.GetKey(interactInput))
+        if (Cursor.lockState == CursorLockMode.Locked)
         {
-            if(Physics.Raycast(transform.position, transform.forward, out interactObject, 5))
+            if (Input.GetKeyDown(interactInput))
             {
-                if(interactObject.collider.gameObject.GetComponent<interactScript>() != null)
-                {
-                    interactObject.collider.gameObject.GetComponent<interactScript>().interaction = 1;
-                }
+                Interact("InteractOne");
+            }
+        }
+        else
+        {
+            if (Input.GetMouseButtonDown(clickInput))
+            {
+                InteractClick("ClickOne");
+            }
+        }
+    }
+
+    private void Interact(string interaction)
+    {
+        if (Physics.Raycast(transform.position, transform.forward, out interactObject, 5))
+        {
+            MonoBehaviour[] scripts = interactObject.transform.GetComponents<MonoBehaviour>();
+            if (scripts.Length > 0)
+            {
+                //Debug.Log(interactObject.collider.name);
+                interactObject.transform.SendMessage(interaction, player.gameObject, SendMessageOptions.DontRequireReceiver);
+            }
+        }
+    }
+
+    private void InteractClick(string interaction)
+    {
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out interactObject, 5))
+        {
+            MonoBehaviour[] scripts = interactObject.transform.GetComponents<MonoBehaviour>();
+            if (scripts.Length > 0)
+            {
+                //Debug.Log(interactObject.collider.name);
+                interactObject.transform.SendMessage(interaction, SendMessageOptions.DontRequireReceiver);
             }
         }
     }
@@ -106,16 +143,16 @@ public class playerCam : MonoBehaviour
         if (freeHeadMode)
         {
             //deactivate
-            initialFov = 50;
-            finalFov = 60;
+            initialFov = freeHeadFov;
+            finalFov = fov;
             tempPlayerRotation = head.rotation;
             tempCamRotation = transform.rotation;
         }
         else
         {
             //initiate
-            initialFov = 60;
-            finalFov = 50;
+            initialFov = fov;
+            finalFov = freeHeadFov;
             originalPlayerRotation = player.rotation;
             originalCamRotation = transform.rotation;
         }

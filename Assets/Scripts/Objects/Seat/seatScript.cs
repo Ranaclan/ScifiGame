@@ -3,9 +3,6 @@
 public class seatScript : MonoBehaviour
 {
     //script attached to seat objects
-    //interaction script
-    private interactScript interact;
-    public string interactInput = "g";
     //player
     private Transform player;
     private Transform playerCam;
@@ -26,8 +23,6 @@ public class seatScript : MonoBehaviour
     
     private void Start()
     {
-        //interaction script
-        interact = gameObject.GetComponent<interactScript>();
         //player
         player = GameObject.Find("Player").transform;
         playerCam = player.GetChild(0).GetChild(0);
@@ -45,35 +40,15 @@ public class seatScript : MonoBehaviour
         }
         else
         {
-            InitiateEnter();
             Enter();
         }
     }
 
-    private bool CheckInteraction()
+    private void InteractOne(GameObject origin)
     {
-        if(Input.GetKey(interactInput))
+        if (!entering && !sitting)
         {
-            if(interact.interaction == 1)
-            {
-                interact.interaction = 0;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private void InitiateEnter()
-    {
-        if(CheckInteraction())
-        {
+            Debug.Log("aa");
             //player has interacted with seat object
             //player
             player.parent = transform;
@@ -84,6 +59,7 @@ public class seatScript : MonoBehaviour
             player.GetComponent<CapsuleCollider>().enabled = true;
             //enter
             entering = true;
+            exiting = false;
             interpolationFraction = 0;
         }
     }
@@ -99,12 +75,6 @@ public class seatScript : MonoBehaviour
         }
         if (interpolationFraction >= 1 && entering)
         {
-            //enter free head mode
-            camScript.freeHeadControl = false;
-            if(!camScript.freeHeadMode)
-            {
-                camScript.FreeHeadModeInitiate();
-            }
             //finish interpolation
             sitting = true;
             exitPosition = transform.position;
@@ -148,9 +118,6 @@ public class seatScript : MonoBehaviour
         }
         if (interpolationFraction >= 1 && exiting)
         {
-            //exit free head mode
-            camScript.FreeHeadModeInitiate();
-            camScript.freeHeadControl = true;
             //finish interpolation
             sitting = false;
             player.GetComponent<CapsuleCollider>().enabled = true;

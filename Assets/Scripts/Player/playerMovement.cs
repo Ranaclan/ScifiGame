@@ -52,7 +52,7 @@ public class playerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (move)
+        if (move && Cursor.lockState == CursorLockMode.Locked)
         {
             Movement();
             GroundCheck();

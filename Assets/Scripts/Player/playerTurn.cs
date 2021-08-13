@@ -22,7 +22,10 @@ public class playerTurn : MonoBehaviour
 
     private void Update()
     {
-        CalculateRotation();
+        if (Cursor.lockState == CursorLockMode.Locked)
+        {
+            CalculateRotation();
+        }
     }
 
     private void CalculateRotation()
