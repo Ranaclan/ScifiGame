@@ -1,25 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class textButton : MonoBehaviour
 {
     //menu change
     private Transform menuList;
     private GameObject currentMenu;
-    private GameObject newMenu;
+    private Transform newMenu;
     //ui
     private Transform panel;
     private screenScript screenScript;
     //components
-    public component component;
-    private string componentType;
+    public thrusterScript thruster;
 
     private void Start()
     {
         menuList = transform.parent.parent;
         currentMenu = transform.parent.gameObject;
-        newMenu = menuList.Find(name).gameObject;
+        newMenu = menuList.Find(name);
 
         panel = transform.parent.parent.parent;
         screenScript = panel.GetComponent<screenScript>();
@@ -34,16 +31,15 @@ public class textButton : MonoBehaviour
         }
         //switch menu
         currentMenu.SetActive(false);
-        newMenu.SetActive(true);
+        newMenu.gameObject.SetActive(true);
         screenScript.ResetScroll();
     }
 
     private void Component()
     {
-        componentType = component.componentType;
-        if (componentType == "Thruster")
+        if (thruster)
         {
-            newMenu.GetComponent<thrusterMenu>().thruster = component;
+            newMenu.GetComponent<thrusterMenu>().thruster = thruster;
         }
     }
 }

@@ -123,10 +123,13 @@ public class screenScript : MonoBehaviour
             Transform uiChild = componentsMenu.GetChild(i);
             Transform componentChild = componentsList.GetChild(i);
             textButton script = uiChild.GetComponent<textButton>();
-            component component = componentChild.GetComponent<componentScript>().component;
             uiChild.GetComponent<TextMeshProUGUI>().text = componentChild.name;
-            uiChild.name = component.componentType;
-            script.component = component;
+            thrusterScript thrusterScript = componentChild.GetComponent<thrusterScript>();
+            if(thrusterScript)
+            {
+                uiChild.name = "Thruster";
+                script.thruster = thrusterScript;
+            }
         }
     }
 

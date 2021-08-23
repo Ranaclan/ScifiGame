@@ -1,18 +1,39 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using TMPro;
 
 public class system : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public float energy;
+    private float maxEnergy = 50;
+
+    private Transform energyDisplay;
+
+    private void Start()
     {
-        
+        energyDisplay = transform.Find("Screen").Find("ScreenUI").Find("Panel").Find("Content").Find("MainMenu").Find("EnergyDisplay");
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        DisplayEnergy();
+        CapEnergy();
+    }
+
+    private void DisplayEnergy()
+    {
+        energyDisplay.GetComponent<TextMeshProUGUI>().text = Mathf.Round(energy).ToString();
+    }
+
+    private void CapEnergy()
+    {
+        if(energy > maxEnergy)
+        {
+            energy = maxEnergy;
+        }
+
+        if(energy < 0)
+        {
+            energy = 0;
+        }
     }
 }

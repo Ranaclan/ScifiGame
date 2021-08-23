@@ -18,6 +18,7 @@ public class playerCam : MonoBehaviour
     //interaction
     public string interactInput = "g";
     public int clickInput = 0;
+    public int rightClick = 1;
     private RaycastHit interactObject;
     //free head mode
     public bool freeHeadMode = false;
@@ -98,6 +99,11 @@ public class playerCam : MonoBehaviour
             {
                 InteractClick("ClickOne");
             }
+
+            if (Input.GetMouseButtonDown(rightClick))
+            {
+                InteractClick("ClickTwo");
+            }
         }
     }
 
@@ -123,7 +129,7 @@ public class playerCam : MonoBehaviour
             if (scripts.Length > 0)
             {
                 //Debug.Log(interactObject.collider.name);
-                interactObject.transform.SendMessage(interaction, SendMessageOptions.DontRequireReceiver);
+                interactObject.transform.SendMessage(interaction, player.gameObject, SendMessageOptions.DontRequireReceiver);
             }
         }
     }
