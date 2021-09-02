@@ -10,6 +10,8 @@ public class screenScript : MonoBehaviour
     private GameObject hud;
     private bool lockMouse = false;
     private bool active = false;
+    private float interactDelay = 0.05f;
+    private float interactCounter = 0.05f;
     //scroll
     private Transform content;
     private float scrollValue;
@@ -22,7 +24,7 @@ public class screenScript : MonoBehaviour
     private Transform componentsList;
     private int componentCount;
     private int slotCount;
-    private float slotSpacing = -0.1f;
+    private float slotSpacing = -0.15f;
 
     private void Start()
     {
@@ -43,6 +45,8 @@ public class screenScript : MonoBehaviour
         {
             ScreenActive();
         }
+
+        DelayInteractions();
     }
 
     private void ScreenActive()
@@ -73,24 +77,40 @@ public class screenScript : MonoBehaviour
         }
     }
 
+    private void DelayInteractions()
+    {
+        if (interactCounter < interactDelay)
+        {
+            interactCounter += Time.deltaTime;
+        }
+    }
+
     private void Lock()
     {
-        //exit menu and lock cursor
-        Cursor.lockState = CursorLockMode.Locked;
-        objectCollider.enabled = true;
-        hud.SetActive(true);
-        active = false;
-        ResetScroll();
+        if (interactCounter >= interactDelay)
+        {
+            //exit menu and lock cursor
+            Cursor.lockState = CursorLockMode.Locked;
+            objectCollider.enabled = true;
+            hud.SetActive(true);
+            active = false;
+            ResetScroll();
+            interactCounter = 0;
+        }
     }
 
     private void Unlock()
     {
-        //enter menu and unlock cursor
-        Cursor.lockState = CursorLockMode.None;
-        objectCollider.enabled = false;
-        hud.SetActive(false);
-        active = true;
-        ResetScroll();
+        if (interactCounter >= interactDelay)
+        {
+            //enter menu and unlock cursor
+            Cursor.lockState = CursorLockMode.None;
+            objectCollider.enabled = false;
+            hud.SetActive(false);
+            active = true;
+            ResetScroll();
+            interactCounter = 0;
+        }
     }
 
     private void Scroll()
@@ -135,15 +155,12 @@ public class screenScript : MonoBehaviour
 
     private void ListSlots()
     {
-        slotCount = 0;
+        slotCount = -1;
         for (int i = 0; i < componentsMenu.childCount; i++)
         {
             Transform child = componentsMenu.GetChild(i);
             Collider slotCollider = child.GetComponent<BoxCollider>();
             string text = child.GetComponent<TextMeshProUGUI>().text;
-
-            //move slot down to make room for previous slot
-            child.Translate(0, slotSpacing * slotCount, 0);
 
             if (text != "")
             {
@@ -155,6 +172,9 @@ public class screenScript : MonoBehaviour
             {
                 slotCollider.enabled = false;
             }
+
+            //move slot down to make room for previous slot
+            child.Translate(0, slotSpacing * slotCount, 0);
         }
     }
 }

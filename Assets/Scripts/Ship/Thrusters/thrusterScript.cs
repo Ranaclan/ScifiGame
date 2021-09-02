@@ -41,15 +41,12 @@ public class thrusterScript : MonoBehaviour
 
     private void SubtractPower()
     {
-        if (systemScript.energy >= power)
-        {
-            powerUsed = power;
-            systemScript.energy -= power;
-        }
+        powerUsed = power;
+        systemScript.energy -= power * Time.deltaTime;
 
-        if (systemScript.energy < power)
+        if (systemScript.energy <= 0)
         {
-            powerUsed = systemScript.energy;
+            powerUsed += systemScript.energy;
             systemScript.energy = 0;
         }
     }
