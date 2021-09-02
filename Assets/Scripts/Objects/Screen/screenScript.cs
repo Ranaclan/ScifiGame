@@ -89,28 +89,28 @@ public class screenScript : MonoBehaviour
     {
         if (interactCounter >= interactDelay)
         {
-            //exit menu and lock cursor
-            Cursor.lockState = CursorLockMode.Locked;
-            objectCollider.enabled = true;
-            hud.SetActive(true);
-            active = false;
-            ResetScroll();
+        //exit menu and lock cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        objectCollider.enabled = true;
+        hud.SetActive(true);
+        active = false;
+        ResetScroll();
             interactCounter = 0;
-        }
+    }
     }
 
     private void Unlock()
     {
         if (interactCounter >= interactDelay)
         {
-            //enter menu and unlock cursor
-            Cursor.lockState = CursorLockMode.None;
-            objectCollider.enabled = false;
-            hud.SetActive(false);
-            active = true;
-            ResetScroll();
+        //enter menu and unlock cursor
+        Cursor.lockState = CursorLockMode.None;
+        objectCollider.enabled = false;
+        hud.SetActive(false);
+        active = true;
+        ResetScroll();
             interactCounter = 0;
-        }
+    }
     }
 
     private void Scroll()
@@ -161,6 +161,9 @@ public class screenScript : MonoBehaviour
             Transform child = componentsMenu.GetChild(i);
             Collider slotCollider = child.GetComponent<BoxCollider>();
             string text = child.GetComponent<TextMeshProUGUI>().text;
+
+            //move slot down to make room for previous slot
+            child.Translate(0, slotSpacing * slotCount, 0);
 
             if (text != "")
             {
